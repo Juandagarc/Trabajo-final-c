@@ -104,7 +104,7 @@ int main() {
     mostrarMenu();
 
     FILE *adminFile;
-    adminFile = fopen("admin.gitignore", "r");
+    adminFile = fopen(".gitignore", "r");
     //Muestra el error si no se encuentra el archivo
     if (adminFile == NULL)
     {
@@ -118,7 +118,7 @@ int main() {
         fgets(linea, 100, adminFile);
         printf("%s", linea);
     }
-    
+
     int opcion;
     printf("Ingrese una opción: ");
     scanf("%d", &opcion);
