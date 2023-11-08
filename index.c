@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #ifdef _WIN32
 #include <conio.h>
@@ -47,6 +48,7 @@ bool validarCredenciales(char correo[], char contrasena[]) {
     char correo_usuario[50] = "usuario@gmail.com";
     char contrasena_usuario[50] = "123456";
 
+
     if (strcmp(correo, correo_admin) == 0 && strcmp(contrasena, contrasena_admin) == 0) {
         return true;
     } else if (strcmp(correo, correo_usuario) == 0 && strcmp(contrasena, contrasena_usuario) == 0) {
@@ -63,7 +65,10 @@ void mostrarMenu() {
     printf("2. Salir.\n");
 }
 
+
+
 void ingresar() {
+
     char correo[50];
     char contrasena[50];
 
@@ -102,23 +107,6 @@ void ingresar() {
 int main() {
 
     mostrarMenu();
-
-    FILE *adminFile;
-    adminFile = fopen(".gitignore", "r");
-    //Muestra el error si no se encuentra el archivo
-    if (adminFile == NULL)
-    {
-        printf("Error al abrir el archivo");
-        return 1;
-    }
-    //Muestra el texto del archivo
-    while (feof(adminFile) == 0)
-    {
-        char linea[100];
-        fgets(linea, 100, adminFile);
-        printf("%s", linea);
-    }
-
     int opcion;
     printf("Ingrese una opción: ");
     scanf("%d", &opcion);
