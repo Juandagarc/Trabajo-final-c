@@ -1,0 +1,6 @@
+1,Luis Fernando Gaviria Trujillo,20.
+2,Carlos Alfonso Victoria Mena,3.
+3,Giovanni Arias,2.
+4,Xiomara Rocío González Ordoñez,1.
+5,Alexander Molina Cabrera,12.
+6,Juan Carlos Gutiérrez Arias,4.
