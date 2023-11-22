@@ -47,7 +47,17 @@ struct Candidato
     int tarjeton;
     char nombre[50];
     int votos;
+    int votos_estudiantes;
+    int votos_docentes;
+    int votos_egresados;
+    int votos_administrativos;
+    int votos_consejo;
 };
+
+typedef struct {
+    int id;
+    char* role;
+} User;
 
 bool validarCredenciales(char correo[], char contrasena[], char ocupacion[], char nombreusuario[]) {
     FILE *usuarios;
@@ -84,7 +94,7 @@ bool validarCredenciales(char correo[], char contrasena[], char ocupacion[], cha
     return false; 
 }
 
-void ingresodevoto(char nombreusuario[]){
+void ingresodevoto(char nombreusuario[], char ocupacion[]){
     FILE *candidatos;
     candidatos = fopen("candidatos.txt", "r+");
 
@@ -103,14 +113,35 @@ void ingresodevoto(char nombreusuario[]){
 
     printf("\nIngrese el numero de su candidato:\t");
     scanf("%d", &voto);
-   while (fscanf(candidatos, "%d,%[^,],%d.\n", &tarjeton, candidato.nombre, &candidato.votos) == 3) {
+    //Pero ahora se hace teniendo en cuenta que la estructura es 1,Luis Fernando Gaviria Trujillo,11,votos-estudiantes,votos-docentes,votos-egresados,votos-administrativos,votos-consejo.
+    while (fscanf(candidatos, "%d,%[^,],%d,%d,%d,%d,%d,%d.\n", &tarjeton, candidato.nombre, &candidato.votos, &candidato.votos_estudiantes, &candidato.votos_docentes, &candidato.votos_egresados, &candidato.votos_administrativos, &candidato.votos_consejo) == 8) {
         if (voto == tarjeton) {
             candidato.votos++;
-            fseek(candidatos, -4, SEEK_CUR);
-            fprintf(candidatos, "%d.\n", candidato.votos);
+            if (strcmp(ocupacion, "Estudiante") == 0) {
+                candidato.votos_estudiantes++;
+            } else if (strcmp(ocupacion, "Docente") == 0) {
+                candidato.votos_docentes++;
+            } else if (strcmp(ocupacion, "Egresado") == 0) {
+                candidato.votos_egresados++;
+            } else if (strcmp(ocupacion, "Administrativo") == 0) {
+                candidato.votos_administrativos++;
+            } else {
+                candidato.votos_consejo++;
+            }
+        //    Se actualiza este archivo borrando todo y volviendo a escribirlo
+            fseek(candidatos, 0, SEEK_SET);
+            fprintf(candidatos, "1,Luis Fernando Gaviria Trujillo,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
+            fprintf(candidatos, "2,Carlos Alfonso Victoria Mena,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
+            fprintf(candidatos, "3,Giovanni Arias,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
+            fprintf(candidatos, "4,Xiomara Rocío González Ordoñez,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
+            fprintf(candidatos, "5,Alexander Molina Cabrera,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
+            fprintf(candidatos, "6,Juan Carlos Gutiérrez Arias,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
+            //Se borra el resto del archivo
+            ftruncate(fileno(candidatos), ftell(candidatos));
             break;
         }
     }
+    
 
     fclose(candidatos);
 
@@ -125,7 +156,7 @@ void ingresodevoto(char nombreusuario[]){
     while (fscanf(usuarios, "%[^,],%*[^,],%[^,],%*[^,],%d.\n", usuario.nombre, usuario.correo, &usuario.voto) == 3) {
         if (strcmp(usuario.nombre, nombreusuario) == 0 && usuario.voto == 0) {
             fseek(usuarios, -4, SEEK_CUR); 
-            fprintf(usuarios, "%d.\n", 1); 
+            fprintf(usuarios, "%d.", 1); 
             break;
         }
     }
@@ -142,14 +173,22 @@ void mostrarMenu(int opcion) {
     printf("Bienvenido al sistema de votaciones:\n");
     if (opcion == 0) {
         printf(">> Ingresar\n");
+        printf("   Consejo superior\n");
         printf("   Admin\n");
         printf("   Salir\n");
     } else if (opcion == 1) {
         printf("   Ingresar\n");
+        printf(">> Consejo superior\n");
+        printf("   Admin\n");
+        printf("   Salir\n");
+    } else if (opcion == 2) {
+        printf("   Ingresar\n");
+        printf("   Consejo superior\n");
         printf(">> Admin\n");
         printf("   Salir\n");
     } else {
         printf("   Ingresar\n");
+        printf("   Consejo superior\n");
         printf("   Admin\n");
         printf(">> Salir\n");
     }
@@ -193,8 +232,39 @@ void MenuVotar (int opcion) {
     }
 }
 
+void MenuAdmin (int opcion) {
+    system("clear || cls");  // Limpiar pantalla en sistemas macOS o Windows
+    if (opcion == 0) {
+        printf(">> Ver votos\n");
+        printf("   Ver histograma\n");
+        printf("   Salir\n");
+    } else if (opcion == 1) {
+        printf("   Ver votos\n");
+        printf(">> Ver histograma\n");
+        printf("   Salir\n");
+    } else {
+        printf("   Ver votos\n");
+        printf("   Ver histograma\n");
+        printf(">> Salir\n");
+    }
+}
 
-void menuUsuario(char nombreusuario[]){
+void MenuConsejo(int opcion, User users[]) {
+    system("clear || cls");
+
+    printf("Seleccione una opción:\n");
+
+    for (int i = 0; i < 9; ++i) {
+        if (opcion == i) {
+            printf(">> %d. %s\n", users[i].id, users[i].role);
+        } else {
+            printf("   %d. %s\n", users[i].id, users[i].role);
+        }
+    }
+}
+
+
+void menuUsuario(char nombreusuario[], char ocupacion[]){
     int op = 0;
     char ch;
     do {
@@ -219,28 +289,11 @@ void menuUsuario(char nombreusuario[]){
     } while (ch != 10);  //  es el código ASCII para la tecla Enter
     switch (op){
         case 0:
-            ingresodevoto(nombreusuario);
+            ingresodevoto(nombreusuario, ocupacion);
             break;
         default:
             printf("Cerrando...\n");
             break;
-    }
-}
-
-void MenuAdmin (int opcion) {
-    system("clear || cls");  // Limpiar pantalla en sistemas macOS o Windows
-    if (opcion == 0) {
-        printf(">> Ver votos\n");
-        printf("   Ver histograma\n");
-        printf("   Salir\n");
-    } else if (opcion == 1) {
-        printf("   Ver votos\n");
-        printf(">> Ver histograma\n");
-        printf("   Salir\n");
-    } else {
-        printf("   Ver votos\n");
-        printf("   Ver histograma\n");
-        printf(">> Salir\n");
     }
 }
 
@@ -285,7 +338,7 @@ void ingresar() {
     }
 
     //muestra la ocupacion
-    printf("%s", ocupacion);
+    // printf("%s", ocupacion);
 
     printf("Ingrese su correo: ");
     scanf("%s", correo);
@@ -315,13 +368,165 @@ void ingresar() {
 
     if (validarCredenciales(correo, contrasena, ocupacion, nombreusuario)) {
         printf("\nBienvenido.\n");
-        menuUsuario(nombreusuario);
+        menuUsuario(nombreusuario, ocupacion);
+
     } else {
         printf("\nHubo un error al verificar datos.\n");
         printf("\nVuelva a intentarlo\n");
         sleep(2);
         ingresar(); // Reintenta el ingreso
     }
+}
+
+
+void VotarConsejoSuperior(char rol[]) {
+    FILE *candidatos;
+    candidatos = fopen("candidatos.txt", "r+");
+
+    int voto;
+    int tarjeton;
+
+    struct Candidato candidato;
+
+    printf("\tCANDIDATOS\n");
+    printf("\n1. Luis Fernando Gaviria Trujillo");
+    printf("\n2. Carlos Alfonso Victoria Mena");
+    printf("\n3. Giovanni Arias");
+    printf("\n4. Xiomara Rocío González Ordoñez");
+    printf("\n5. Alexander Molina Cabrera");
+    printf("\n6. Juan Carlos Gutiérrez Arias");
+
+    printf("\nIngrese el numero de su candidato:\t");
+    scanf("%d", &voto);
+    //Pero ahora se hace teniendo en cuenta que la estructura es 1,Luis Fernando Gaviria Trujillo,11,votos-estudiantes,votos-docentes,votos-egresados,votos-administrativos,votos-consejo. Igual el rol siempre sera Consejo_Superior
+    while (fscanf(candidatos, "%d,%[^,],%d,%d,%d,%d,%d,%d.\n", &tarjeton, candidato.nombre, &candidato.votos, &candidato.votos_estudiantes, &candidato.votos_docentes, &candidato.votos_egresados, &candidato.votos_administrativos, &candidato.votos_consejo) == 8) {
+        if (voto == tarjeton) {
+            candidato.votos++;
+            candidato.votos_consejo++;
+        //    Se actualiza este archivo borrando todo y volviendo a escribirlo
+            fseek(candidatos, 0, SEEK_SET);
+            fprintf(candidatos, "1,Luis Fernando Gaviria Trujillo,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
+            fprintf(candidatos, "2,Carlos Alfonso Victoria Mena,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
+            fprintf(candidatos, "3,Giovanni Arias,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
+            fprintf(candidatos, "4,Xiomara Rocío González Ordoñez,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
+            fprintf(candidatos, "5,Alexander Molina Cabrera,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
+            fprintf(candidatos, "6,Juan Carlos Gutiérrez Arias,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
+            //Se borra el resto del archivo
+            ftruncate(fileno(candidatos), ftell(candidatos));
+            break;
+        }
+    }
+    
+    fclose(candidatos);
+
+    FILE *usuarios;
+    usuarios = fopen("consejo_superior.txt", "r+");
+
+    printf("%s", rol);
+
+    struct Usuario rolUsuario;
+
+    while (fscanf(usuarios, "%*d,%[^,],%*[^,],%d.\n", rolUsuario.ocupacion, &rolUsuario.voto) == 2) {
+        if (strcmp(rolUsuario.ocupacion, rol) == 0 && rolUsuario.voto == 0) {
+            fseek(usuarios, -3, SEEK_CUR); 
+            fprintf(usuarios, "%d.\n", 1); 
+            break;
+        }
+    }
+    fclose(usuarios);
+
+    printf("\nVoto realizado\n");
+    sleep(2);
+}
+
+void IngresoConsejoSuperior() {
+
+    User users[9];
+
+    // Inicializar los usuarios con los roles proporcionados
+    users[0] = (User){1, "Ministro_Educacion"};
+    users[1] = (User){2, "Gobernador_Risaralda"};
+    users[2] = (User){3, "Miembro_Presidente"};
+    users[3] = (User){4, "Representante_Directivas"};
+    users[4] = (User){5, "Representante_Docentes"};
+    users[5] = (User){6, "Representante_Estudiantes"};
+    users[6] = (User){7, "Representante_Egresados"};
+    users[7] = (User){8, "Representante_Sector_Productivo"};
+    users[8] = (User){9, "Exrector_UTP"};
+
+    int opcion = 0;
+    char ch;
+    do {
+        MenuConsejo(opcion, users);
+
+        ch = getch();
+
+        if (ch == 27) {  // Comprobamos si es una secuencia de escape (código para flechas en algunas terminales)
+            getch(); // Descartamos el siguiente carácter
+            switch (getch()) {
+                case 65:  // Flecha arriba
+                    opcion = (opcion - 1 + 9) % 9;
+                    break;
+                case 66:  // Flecha abajo
+                    opcion = (opcion + 1) % 9;
+                    break;
+            }
+        }
+
+        system("clear || cls");  // Limpiar pantalla en sistemas macOS o Windows
+
+    } while (ch != 10);  //  es el código ASCII para la tecla Enter
+
+    //dependiendo de la opcion se le asigna el rol
+    char rol[50];
+    strcpy(rol, users[opcion].role);
+
+    system("clear || cls");  // Limpiar pantalla en sistemas macOS o Windows
+
+    printf("Ingrese su contraseña: ");
+
+    int i = 0;
+    char contrasena[50];
+    while (i < 49) {
+        char ch = getch();
+
+        if (ch == '\n' || ch == '\r') {
+            contrasena[i] = '\0';
+            break;
+        } else if (ch == 8) {
+            if (i > 0) {
+                i--;
+                printf("\b \b");
+            }
+        } else {
+            contrasena[i] = ch;
+            i++;
+            printf("*");
+        }
+    }
+
+    //Se busca en consejo_superior.txt el rol y la contraseña suponiendo que la estructura es id,Rol,contraseña,0.
+    FILE *candidatos;
+    
+    candidatos = fopen("consejo_superior.txt", "r");
+
+    // Se verifica que el rol y la contraseña sean correctos y que el ultimo numero sea 0
+    //el id es la opcion + 1
+    char rolconsejo[50];
+    char contrasenaconsejo[50];
+    // lo mas importante es que el ultimo numero sea 0
+    int voto;
+    while (fscanf(candidatos, "%*d,%[^,],%[^,],%d.\n", rolconsejo, contrasenaconsejo, &voto) == 3) {
+        if (strcmp(rolconsejo, rol) == 0 && strcmp(contrasenaconsejo, contrasena) == 0 && voto == 0) {
+            printf("\nBienvenido.\n");
+            VotarConsejoSuperior(rol);
+            break;
+        } else if (strcmp(rolconsejo, rol) == 0 && strcmp(contrasenaconsejo, contrasena) == 0 && voto == 1) {
+            printf("\nya ha votado.\n");
+            break;
+        }
+    }
+    fclose(candidatos);
 }
 
 void titulo () {
@@ -356,7 +561,7 @@ void VerVotos () {
     }
 
     printf("\n");
-    printf("        Candidatos: \t\t Votos: \t Porcentaje(%%)\n");
+    printf("        Candidatos: \t\t\t Votos:  Porcentaje(%%)\n");
     printf("1. Luis Fernando Gaviria Trujillo: \t %d \t %f\n", votos[0], votos[0] * 100 / votostotales);
     printf("2. Carlos Alfonso Victoria Mena: \t %d \t %f\n", votos[1], votos[1] * 100 / votostotales);
     printf("3. Giovanni Arias: \t\t\t %d \t %f\n", votos[2], votos[2] * 100 / votostotales);
@@ -473,7 +678,6 @@ void ValidarAdmin() {
     scanf("%s", usuario);
 
     printf("Ingrese su contraseña: ");
-    
     int i = 0;
     while (i < 49) {
         char ch = getch();
@@ -521,21 +725,6 @@ int main() {
 
     char ch;
 
-    //cuando este en windows cambiar el 27 por 224
-    // do {
-    //     mostrarMenu(opcion);
-
-    //     ch = getch();
-    //     switch (ch) {
-    //         case 72:  // Flecha arriba
-    //             opcion = (opcion - 1 + 2) % 2;
-    //             break;
-    //         case 80:  // Flecha abajo
-    //             opcion = (opcion + 1) % 2;
-    //             break;
-    //     }
-    // } while (ch != 13);  // 13 es el código ASCII para la tecla Enter
-
     //para mac
     do {
         mostrarMenu(opcion);
@@ -546,10 +735,10 @@ int main() {
             getch(); // Descartamos el siguiente carácter
             switch (getch()) {
                 case 65:  // Flecha arriba
-                    opcion = (opcion - 1 + 3) % 3;
+                    opcion = (opcion - 1 + 4) % 4;
                     break;
                 case 66:  // Flecha abajo
-                    opcion = (opcion + 1) % 3;
+                    opcion = (opcion + 1) % 4;
                     break;
             }
         }
@@ -561,12 +750,17 @@ int main() {
     switch (opcion) {
         case 0:
             ingresar();
+            main();
             break;
         case 1:
-            ValidarAdmin();
+            IngresoConsejoSuperior();
             main();
             break;
         case 2:
+            ValidarAdmin();
+            main();
+            break;
+        case 3:
             printf("Cerrando...\n");
             return 0;
             break;
