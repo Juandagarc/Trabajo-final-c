@@ -54,6 +54,8 @@ struct Candidato
     int votos_consejo;
 };
 
+
+
 typedef struct {
     int id;
     char* role;
@@ -101,7 +103,13 @@ void ingresodevoto(char nombreusuario[], char ocupacion[]){
     int voto;
     int tarjeton;
 
-    struct Candidato candidato;
+    struct Candidato candidato[6];
+
+    //Se llena el arreglo de estructuras con los datos del archivo
+    int i = 0;
+    while (fscanf(candidatos, "%d,%[^,],%d,%d,%d,%d,%d,%d.\n", &candidato[i].tarjeton, candidato[i].nombre, &candidato[i].votos, &candidato[i].votos_estudiantes, &candidato[i].votos_docentes, &candidato[i].votos_egresados, &candidato[i].votos_administrativos, &candidato[i].votos_consejo) == 8) {
+        i++;
+    }
 
     printf("\tCANDIDATOS\n");
     printf("\n1. Luis Fernando Gaviria Trujillo");
@@ -113,36 +121,34 @@ void ingresodevoto(char nombreusuario[], char ocupacion[]){
 
     printf("\nIngrese el numero de su candidato:\t");
     scanf("%d", &voto);
-    //Pero ahora se hace teniendo en cuenta que la estructura es 1,Luis Fernando Gaviria Trujillo,11,votos-estudiantes,votos-docentes,votos-egresados,votos-administrativos,votos-consejo.
-    while (fscanf(candidatos, "%d,%[^,],%d,%d,%d,%d,%d,%d.\n", &tarjeton, candidato.nombre, &candidato.votos, &candidato.votos_estudiantes, &candidato.votos_docentes, &candidato.votos_egresados, &candidato.votos_administrativos, &candidato.votos_consejo) == 8) {
-        if (voto == tarjeton) {
-            candidato.votos++;
+    
+    //Se busca el candidato y se le suma un voto a el y a su grupo
+    for (int i = 0; i < 6; i++) {
+        if (voto == candidato[i].tarjeton) {
+            candidato[i].votos++;
             if (strcmp(ocupacion, "Estudiante") == 0) {
-                candidato.votos_estudiantes++;
+                candidato[i].votos_estudiantes++;
             } else if (strcmp(ocupacion, "Docente") == 0) {
-                candidato.votos_docentes++;
+                candidato[i].votos_docentes++;
             } else if (strcmp(ocupacion, "Egresado") == 0) {
-                candidato.votos_egresados++;
+                candidato[i].votos_egresados++;
             } else if (strcmp(ocupacion, "Administrativo") == 0) {
-                candidato.votos_administrativos++;
-            } else {
-                candidato.votos_consejo++;
+                candidato[i].votos_administrativos++;
             }
-        //    Se actualiza este archivo borrando todo y volviendo a escribirlo
+            //Se actualiza este archivo borrando todo y volviendo a escribirlo
             fseek(candidatos, 0, SEEK_SET);
-            fprintf(candidatos, "1,Luis Fernando Gaviria Trujillo,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
-            fprintf(candidatos, "2,Carlos Alfonso Victoria Mena,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
-            fprintf(candidatos, "3,Giovanni Arias,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
-            fprintf(candidatos, "4,Xiomara Rocío González Ordoñez,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
-            fprintf(candidatos, "5,Alexander Molina Cabrera,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
-            fprintf(candidatos, "6,Juan Carlos Gutiérrez Arias,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
+            fprintf(candidatos, "1,Luis Fernando Gaviria Trujillo,%d,%d,%d,%d,%d,%d.\n", candidato[0].votos, candidato[0].votos_estudiantes, candidato[0].votos_docentes, candidato[0].votos_egresados, candidato[0].votos_administrativos, candidato[0].votos_consejo);
+            fprintf(candidatos, "2,Carlos Alfonso Victoria Mena,%d,%d,%d,%d,%d,%d.\n", candidato[1].votos, candidato[1].votos_estudiantes, candidato[1].votos_docentes, candidato[1].votos_egresados, candidato[1].votos_administrativos, candidato[1].votos_consejo);
+            fprintf(candidatos, "3,Giovanni Arias,%d,%d,%d,%d,%d,%d.\n", candidato[2].votos, candidato[2].votos_estudiantes, candidato[2].votos_docentes, candidato[2].votos_egresados, candidato[2].votos_administrativos, candidato[2].votos_consejo);
+            fprintf(candidatos, "4,Xiomara Rocío González Ordoñez,%d,%d,%d,%d,%d,%d.\n", candidato[3].votos, candidato[3].votos_estudiantes, candidato[3].votos_docentes, candidato[3].votos_egresados, candidato[3].votos_administrativos, candidato[3].votos_consejo);
+            fprintf(candidatos, "5,Alexander Molina Cabrera,%d,%d,%d,%d,%d,%d.\n", candidato[4].votos, candidato[4].votos_estudiantes, candidato[4].votos_docentes, candidato[4].votos_egresados, candidato[4].votos_administrativos, candidato[4].votos_consejo);
+            fprintf(candidatos, "6,Juan Carlos Gutiérrez Arias,%d,%d,%d,%d,%d,%d.\n", candidato[5].votos, candidato[5].votos_estudiantes, candidato[5].votos_docentes, candidato[5].votos_egresados, candidato[5].votos_administrativos, candidato[5].votos_consejo);
             //Se borra el resto del archivo
             ftruncate(fileno(candidatos), ftell(candidatos));
             break;
         }
     }
     
-
     fclose(candidatos);
 
     FILE *usuarios;
@@ -202,21 +208,31 @@ void menugrupo( int opcion){
         printf("   Docente\n");
         printf("   Egresado\n");
         printf("   Estudiante\n");
+        printf("   Atras\n");
     } else if (opcion == 1) {
         printf("   Administrativo\n");
         printf(">> Docente\n");
         printf("   Egresado\n");
         printf("   Estudiante\n");
+        printf("   Atras\n");
     } else if (opcion == 2) {
         printf("   Administrativo\n");
         printf("   Docente\n");
         printf(">> Egresado\n");
         printf("   Estudiante\n");
-    } else {
+        printf("   Atras\n");
+    } else if (opcion == 3) {
         printf("   Administrativo\n");
         printf("   Docente\n");
         printf("   Egresado\n");
         printf(">> Estudiante\n");
+        printf("   Atras\n");
+    } else {
+        printf("   Administrativo\n");
+        printf("   Docente\n");
+        printf("   Egresado\n");
+        printf("   Estudiante\n");
+        printf(">> Atras\n");
     }
 }
 
@@ -254,7 +270,7 @@ void MenuConsejo(int opcion, User users[]) {
 
     printf("Seleccione una opción:\n");
 
-    for (int i = 0; i < 9; ++i) {
+    for (int i = 0; i < 10; ++i) {
         if (opcion == i) {
             printf(">> %d. %s\n", users[i].id, users[i].role);
         } else {
@@ -312,10 +328,10 @@ void ingresar() {
             getch(); // Descartamos el siguiente carácter
             switch (getch()) {
                 case 65:  // Flecha arriba
-                    g = (g - 1 + 4) % 4;
+                    g = (g - 1 + 5) % 5;
                     break;
                 case 66:  // Flecha abajo
-                    g = (g + 1) % 4;
+                    g = (g + 1) % 5;
                     break;
             }
         }
@@ -333,8 +349,13 @@ void ingresar() {
         case 2:
             strcpy(ocupacion, "Egresado");
             break;
-        default:
+        case 3:
             strcpy(ocupacion, "Estudiante");
+            break;
+    }
+
+    if (g == 4) {
+        return;
     }
 
     //muestra la ocupacion
@@ -386,7 +407,13 @@ void VotarConsejoSuperior(char rol[]) {
     int voto;
     int tarjeton;
 
-    struct Candidato candidato;
+    struct Candidato candidato[6];
+
+    //Se llena el arreglo de estructuras con los datos del archivo
+    int i = 0;
+    while (fscanf(candidatos, "%d,%[^,],%d,%d,%d,%d,%d,%d.\n", &candidato[i].tarjeton, candidato[i].nombre, &candidato[i].votos, &candidato[i].votos_estudiantes, &candidato[i].votos_docentes, &candidato[i].votos_egresados, &candidato[i].votos_administrativos, &candidato[i].votos_consejo) == 8) {
+        i++;
+    }
 
     printf("\tCANDIDATOS\n");
     printf("\n1. Luis Fernando Gaviria Trujillo");
@@ -398,25 +425,27 @@ void VotarConsejoSuperior(char rol[]) {
 
     printf("\nIngrese el numero de su candidato:\t");
     scanf("%d", &voto);
-    //Pero ahora se hace teniendo en cuenta que la estructura es 1,Luis Fernando Gaviria Trujillo,11,votos-estudiantes,votos-docentes,votos-egresados,votos-administrativos,votos-consejo. Igual el rol siempre sera Consejo_Superior
-    while (fscanf(candidatos, "%d,%[^,],%d,%d,%d,%d,%d,%d.\n", &tarjeton, candidato.nombre, &candidato.votos, &candidato.votos_estudiantes, &candidato.votos_docentes, &candidato.votos_egresados, &candidato.votos_administrativos, &candidato.votos_consejo) == 8) {
-        if (voto == tarjeton) {
-            candidato.votos++;
-            candidato.votos_consejo++;
-        //    Se actualiza este archivo borrando todo y volviendo a escribirlo
+    
+    //Se busca el candidato y se le suma un voto a el y a consejo
+    for (int i = 0; i < 6; i++) {
+        if (voto == candidato[i].tarjeton) {
+            candidato[i].votos++;
+            candidato[i].votos_consejo++;
+            //Se actualiza este archivo borrando todo y volviendo a escribirlo
             fseek(candidatos, 0, SEEK_SET);
-            fprintf(candidatos, "1,Luis Fernando Gaviria Trujillo,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
-            fprintf(candidatos, "2,Carlos Alfonso Victoria Mena,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
-            fprintf(candidatos, "3,Giovanni Arias,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
-            fprintf(candidatos, "4,Xiomara Rocío González Ordoñez,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
-            fprintf(candidatos, "5,Alexander Molina Cabrera,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
-            fprintf(candidatos, "6,Juan Carlos Gutiérrez Arias,%d,%d,%d,%d,%d,%d.\n", candidato.votos, candidato.votos_estudiantes, candidato.votos_docentes, candidato.votos_egresados, candidato.votos_administrativos, candidato.votos_consejo);
+            fprintf(candidatos, "1,Luis Fernando Gaviria Trujillo,%d,%d,%d,%d,%d,%d.\n", candidato[0].votos, candidato[0].votos_estudiantes, candidato[0].votos_docentes, candidato[0].votos_egresados, candidato[0].votos_administrativos, candidato[0].votos_consejo);
+            fprintf(candidatos, "2,Carlos Alfonso Victoria Mena,%d,%d,%d,%d,%d,%d.\n", candidato[1].votos, candidato[1].votos_estudiantes, candidato[1].votos_docentes, candidato[1].votos_egresados, candidato[1].votos_administrativos, candidato[1].votos_consejo);
+            fprintf(candidatos, "3,Giovanni Arias,%d,%d,%d,%d,%d,%d.\n", candidato[2].votos, candidato[2].votos_estudiantes, candidato[2].votos_docentes, candidato[2].votos_egresados, candidato[2].votos_administrativos, candidato[2].votos_consejo);
+            fprintf(candidatos, "4,Xiomara Rocío González Ordoñez,%d,%d,%d,%d,%d,%d.\n", candidato[3].votos, candidato[3].votos_estudiantes, candidato[3].votos_docentes, candidato[3].votos_egresados, candidato[3].votos_administrativos, candidato[3].votos_consejo);
+            fprintf(candidatos, "5,Alexander Molina Cabrera,%d,%d,%d,%d,%d,%d.\n", candidato[4].votos, candidato[4].votos_estudiantes, candidato[4].votos_docentes, candidato[4].votos_egresados, candidato[4].votos_administrativos, candidato[4].votos_consejo);
+            fprintf(candidatos, "6,Juan Carlos Gutiérrez Arias,%d,%d,%d,%d,%d,%d.\n", candidato[5].votos, candidato[5].votos_estudiantes, candidato[5].votos_docentes, candidato[5].votos_egresados, candidato[5].votos_administrativos, candidato[5].votos_consejo);
             //Se borra el resto del archivo
             ftruncate(fileno(candidatos), ftell(candidatos));
             break;
         }
     }
-    
+
+
     fclose(candidatos);
 
     FILE *usuarios;
@@ -441,7 +470,7 @@ void VotarConsejoSuperior(char rol[]) {
 
 void IngresoConsejoSuperior() {
 
-    User users[9];
+    User users[10];
 
     // Inicializar los usuarios con los roles proporcionados
     users[0] = (User){1, "Ministro_Educacion"};
@@ -453,6 +482,8 @@ void IngresoConsejoSuperior() {
     users[6] = (User){7, "Representante_Egresados"};
     users[7] = (User){8, "Representante_Sector_Productivo"};
     users[8] = (User){9, "Exrector_UTP"};
+    //Para atras
+    users[9] = (User){10, "Atras"};
 
     int opcion = 0;
     char ch;
@@ -465,10 +496,10 @@ void IngresoConsejoSuperior() {
             getch(); // Descartamos el siguiente carácter
             switch (getch()) {
                 case 65:  // Flecha arriba
-                    opcion = (opcion - 1 + 9) % 9;
+                    opcion = (opcion - 1 + 10) % 10;
                     break;
                 case 66:  // Flecha abajo
-                    opcion = (opcion + 1) % 9;
+                    opcion = (opcion + 1) % 10;
                     break;
             }
         }
@@ -480,6 +511,10 @@ void IngresoConsejoSuperior() {
     //dependiendo de la opcion se le asigna el rol
     char rol[50];
     strcpy(rol, users[opcion].role);
+
+    if (opcion == 9) {
+        return;
+    }
 
     system("clear || cls");  // Limpiar pantalla en sistemas macOS o Windows
 
@@ -544,31 +579,65 @@ void VerVotos () {
     FILE *candidatos;
     candidatos = fopen("candidatos.txt", "r");
 
-    struct Candidato candidato;
+    //Pero ahora se hace teniendo en cuenta que la estructura es tarjeton,Luis Fernando Gaviria Trujillo,11,votos-estudiantes,votos-docentes,votos-egresados,votos-administrativos,votos-consejo.
+    struct Candidato candidato[6];
 
-    int votos[6] = {0, 0, 0, 0, 0, 0};
-    //si la estructura es 1,Luis Fernando Gaviria Trujillo,0. el while seria
-    while (fscanf(candidatos, "%d,%[^,],%d.\n", &candidato.tarjeton, candidato.nombre, &candidato.votos) == 3) {
-        votos[candidato.tarjeton - 1] = candidato.votos;
+    //si la estructura es es tarjeton,candidato,votos,votos-estudiantes,votos-docentes,votos-egresados,votos-administrativos,votos-consejo.
+    //Se guarda cada candidato en un arreglo de estructuras
+    int i = 0;
+    while (fscanf(candidatos, "%d,%[^,],%d,%d,%d,%d,%d,%d.\n", &candidato[i].tarjeton, candidato[i].nombre, &candidato[i].votos, &candidato[i].votos_estudiantes, &candidato[i].votos_docentes, &candidato[i].votos_egresados, &candidato[i].votos_administrativos, &candidato[i].votos_consejo) == 8) {
+        i++;
     }
+
 
     fclose(candidatos);
 
     //Se halla los votos totales
     float votostotales = 0;
     for (int i = 0; i < 6; i++) {
-        votostotales += votos[i];
+        votostotales += candidato[i].votos;
     }
 
     printf("\n");
-    printf("        Candidatos: \t\t\t Votos:  Porcentaje(%%)\n");
-    printf("1. Luis Fernando Gaviria Trujillo: \t %d \t %f\n", votos[0], votos[0] * 100 / votostotales);
-    printf("2. Carlos Alfonso Victoria Mena: \t %d \t %f\n", votos[1], votos[1] * 100 / votostotales);
-    printf("3. Giovanni Arias: \t\t\t %d \t %f\n", votos[2], votos[2] * 100 / votostotales);
-    printf("4. Xiomara Rocío González Ordoñez: \t %d \t %f\n", votos[3], votos[3] * 100 / votostotales);
-    printf("5. Alexander Molina Cabrera: \t\t %d \t %f\n", votos[4], votos[4] * 100 / votostotales);
-    printf("6. Juan Carlos Gutiérrez Arias: \t %d \t %f\n", votos[5], votos[5] * 100 / votostotales);
-
+    printf("Votos totales: %.0f\n", votostotales);
+    printf("Votos por candidato:\n");
+    printf("                                      ┌─────────────────────────────────────────────────────────────┐\n");
+    printf("                                      │                              VOTOS                          │\n");
+    printf("┌──────┬──────────────────────────────┼──────┬───────────┬────────┬─────────┬───────────────┬───────┤\n");
+    printf("│numero│nombre:                       │total │estudiantes│docentes│egresados│administrativos│consejo│\n");
+    printf("├──────┼──────────────────────────────┼──────┼───────────┼────────┼─────────┼───────────────┼───────┤\n");
+    printf("│1     │Luis Fernando Gaviria Trujillo│%6d│%11d│%8d│%9d│%15d│%7d│\n", candidato[0].votos, candidato[0].votos_estudiantes, candidato[0].votos_docentes, candidato[0].votos_egresados, candidato[0].votos_administrativos, candidato[0].votos_consejo);
+    printf("├──────┼──────────────────────────────┼──────┼───────────┼────────┼─────────┼───────────────┼───────┤\n");
+    printf("│2     │Carlos Alfonso Victoria Mena  │%6d│%11d│%8d│%9d│%15d│%7d│\n", candidato[1].votos, candidato[1].votos_estudiantes, candidato[1].votos_docentes, candidato[1].votos_egresados, candidato[1].votos_administrativos, candidato[1].votos_consejo);
+    printf("├──────┼──────────────────────────────┼──────┼───────────┼────────┼─────────┼───────────────┼───────┤\n");
+    printf("│3     │Giovanni Arias                │%6d│%11d│%8d│%9d│%15d│%7d│\n", candidato[2].votos, candidato[2].votos_estudiantes, candidato[2].votos_docentes, candidato[2].votos_egresados, candidato[2].votos_administrativos, candidato[2].votos_consejo);
+    printf("├──────┼──────────────────────────────┼──────┼───────────┼────────┼─────────┼───────────────┼───────┤\n");
+    printf("│4     │Xiomara Rocío González Ordoñez│%6d│%11d│%8d│%9d│%15d│%7d│\n", candidato[3].votos, candidato[3].votos_estudiantes, candidato[3].votos_docentes, candidato[3].votos_egresados, candidato[3].votos_administrativos, candidato[3].votos_consejo);
+    printf("├──────┼──────────────────────────────┼──────┼───────────┼────────┼─────────┼───────────────┼───────┤\n");
+    printf("│5     │Alexander Molina Cabrera      │%6d│%11d│%8d│%9d│%15d│%7d│\n", candidato[4].votos, candidato[4].votos_estudiantes, candidato[4].votos_docentes, candidato[4].votos_egresados, candidato[4].votos_administrativos, candidato[4].votos_consejo);
+    printf("├──────┼──────────────────────────────┼──────┼───────────┼────────┼─────────┼───────────────┼───────┤\n");
+    printf("│6     │Juan Carlos Gutiérrez Arias   │%6d│%11d│%8d│%9d│%15d│%7d│\n", candidato[5].votos, candidato[5].votos_estudiantes, candidato[5].votos_docentes, candidato[5].votos_egresados, candidato[5].votos_administrativos, candidato[5].votos_consejo);
+    printf("└──────┴──────────────────────────────┴──────┴───────────┴────────┴─────────┴───────────────┴───────┘\n");
+    printf("\n\n");
+    //Ahora en porcentajes
+    printf("Votos por candidato en porcentaje:\n");
+    printf("                                      ┌─────────────────────────────────────────────────────────────┐\n");
+    printf("                                      │                              VOTOS                          │\n");
+    printf("┌──────┬──────────────────────────────┼──────┬───────────┬────────┬─────────┬───────────────┬───────┤\n");
+    printf("│numero│nombre:                       │total │estudiantes│docentes│egresados│administrativos│consejo│\n");
+    printf("├──────┼──────────────────────────────┼──────┼───────────┼────────┼─────────┼───────────────┼───────┤\n");
+    printf("│1     │Luis Fernando Gaviria Trujillo│%6.2f│%11.2f│%8.2f│%9.2f│%15.2f│%7.2f│\n", candidato[0].votos / votostotales * 100, candidato[0].votos_estudiantes / votostotales * 100, candidato[0].votos_docentes / votostotales * 100, candidato[0].votos_egresados / votostotales * 100, candidato[0].votos_administrativos / votostotales * 100, candidato[0].votos_consejo / votostotales * 100);
+    printf("├──────┼──────────────────────────────┼──────┼───────────┼────────┼─────────┼───────────────┼───────┤\n");
+    printf("│2     │Carlos Alfonso Victoria Mena  │%6.2f│%11.2f│%8.2f│%9.2f│%15.2f│%7.2f│\n", candidato[1].votos / votostotales * 100, candidato[1].votos_estudiantes / votostotales * 100, candidato[1].votos_docentes / votostotales * 100, candidato[1].votos_egresados / votostotales * 100, candidato[1].votos_administrativos / votostotales * 100, candidato[1].votos_consejo / votostotales * 100);
+    printf("├──────┼──────────────────────────────┼──────┼───────────┼────────┼─────────┼───────────────┼───────┤\n");
+    printf("│3     │Giovanni Arias                │%6.2f│%11.2f│%8.2f│%9.2f│%15.2f│%7.2f│\n", candidato[2].votos / votostotales * 100, candidato[2].votos_estudiantes / votostotales * 100, candidato[2].votos_docentes / votostotales * 100, candidato[2].votos_egresados / votostotales * 100, candidato[2].votos_administrativos / votostotales * 100, candidato[2].votos_consejo / votostotales * 100);
+    printf("├──────┼──────────────────────────────┼──────┼───────────┼────────┼─────────┼───────────────┼───────┤\n");
+    printf("│4     │Xiomara Rocío González Ordoñez│%6.2f│%11.2f│%8.2f│%9.2f│%15.2f│%7.2f│\n", candidato[3].votos / votostotales * 100, candidato[3].votos_estudiantes / votostotales * 100, candidato[3].votos_docentes / votostotales * 100, candidato[3].votos_egresados / votostotales * 100, candidato[3].votos_administrativos / votostotales * 100, candidato[3].votos_consejo / votostotales * 100);
+    printf("├──────┼──────────────────────────────┼──────┼───────────┼────────┼─────────┼───────────────┼───────┤\n");
+    printf("│5     │Alexander Molina Cabrera      │%6.2f│%11.2f│%8.2f│%9.2f│%15.2f│%7.2f│\n", candidato[4].votos / votostotales * 100, candidato[4].votos_estudiantes / votostotales * 100, candidato[4].votos_docentes / votostotales * 100, candidato[4].votos_egresados / votostotales * 100, candidato[4].votos_administrativos / votostotales * 100, candidato[4].votos_consejo / votostotales * 100);
+    printf("├──────┼──────────────────────────────┼──────┼───────────┼────────┼─────────┼───────────────┼───────┤\n");
+    printf("│6     │Juan Carlos Gutiérrez Arias   │%6.2f│%11.2f│%8.2f│%9.2f│%15.2f│%7.2f│\n", candidato[5].votos / votostotales * 100, candidato[5].votos_estudiantes / votostotales * 100, candidato[5].votos_docentes / votostotales * 100, candidato[5].votos_egresados / votostotales * 100, candidato[5].votos_administrativos / votostotales * 100, candidato[5].votos_consejo / votostotales * 100);
+    printf("└──────┴──────────────────────────────┴──────┴───────────┴────────┴─────────┴───────────────┴───────┘\n");
     printf("\n");
 
 }
@@ -578,50 +647,53 @@ void histograma () {
     FILE *candidatos;
     candidatos = fopen("candidatos.txt", "r");
 
-    struct Candidato candidato;
+    struct Candidato candidato[6];
 
-    int votos[6] = {0, 0, 0, 0, 0, 0};
-    //si la estructura es 1,Luis Fernando Gaviria Trujillo,0. el while seria
-    while (fscanf(candidatos, "%d,%[^,],%d.\n", &candidato.tarjeton, candidato.nombre, &candidato.votos) == 3) {
-        votos[candidato.tarjeton - 1] = candidato.votos;
+    //si la estructura es es tarjeton,candidato,votos,votos-estudiantes,votos-docentes,votos-egresados,votos-administrativos,votos-consejo.
+    //Se guarda cada candidato en un arreglo de estructuras
+    int i = 0;
+    while (fscanf(candidatos, "%d,%[^,],%d,%d,%d,%d,%d,%d.\n", &candidato[i].tarjeton, candidato[i].nombre, &candidato[i].votos, &candidato[i].votos_estudiantes, &candidato[i].votos_docentes, &candidato[i].votos_egresados, &candidato[i].votos_administrativos, &candidato[i].votos_consejo) == 8) {
+        i++;
     }
+
 
     fclose(candidatos);
 
     //Se halla los votos totales
     float votostotales = 0;
     for (int i = 0; i < 6; i++) {
-        votostotales += votos[i];
+        votostotales += candidato[i].votos;
     }
-    printf("\n");
-    printf("Histograma de votos:\n");
-    printf("1. Luis Fernando Gaviria Trujillo: \t");
-    for (int i = 0; i < votos[0]; i++) {
+
+    //Se realiza el histograma con * y se imprime tipo:
+    printf("Histograma:\n");
+    printf("Luis Fernando Gaviria Trujillo:   ");
+    for (int i = 0; i < candidato[0].votos / votostotales * 100; i++) {
         printf("*");
     }
-    printf("\n");
-    printf("2. Carlos Alfonso Victoria Mena: \t");
-    for (int i = 0; i < votos[1]; i++) {
+
+    printf("\nCarlos Alfonso Victoria Mena:     ");
+    for (int i = 0; i < candidato[1].votos / votostotales * 100; i++) {
         printf("*");
     }
-    printf("\n");
-    printf("3. Giovanni Arias: \t\t\t");
-    for (int i = 0; i < votos[2]; i++) {
+
+    printf("\nGiovanni Arias:                   ");
+    for (int i = 0; i < candidato[2].votos / votostotales * 100; i++) {
         printf("*");
     }
-    printf("\n");
-    printf("4. Xiomara Rocío González Ordoñez: \t");
-    for (int i = 0; i < votos[3]; i++) {
+
+    printf("\nXiomara Rocío González Ordoñez:   ");
+    for (int i = 0; i < candidato[3].votos / votostotales * 100; i++) {
         printf("*");
     }
-    printf("\n");
-    printf("5. Alexander Molina Cabrera: \t\t");
-    for (int i = 0; i < votos[4]; i++) {
+
+    printf("\nAlexander Molina Cabrera:         ");
+    for (int i = 0; i < candidato[4].votos / votostotales * 100; i++) {
         printf("*");
     }
-    printf("\n");
-    printf("6. Juan Carlos Gutiérrez Arias: \t");
-    for (int i = 0; i < votos[5]; i++) {
+
+    printf("\nJuan Carlos Gutiérrez Arias:      ");
+    for (int i = 0; i < candidato[5].votos / votostotales * 100; i++) {
         printf("*");
     }
     printf("\n");
