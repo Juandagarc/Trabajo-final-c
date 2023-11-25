@@ -253,14 +253,21 @@ void MenuAdmin (int opcion) {
     if (opcion == 0) {
         printf(">> Ver votos\n");
         printf("   Ver histograma\n");
+        printf("   Mostrar terna\n");
         printf("   Salir\n");
     } else if (opcion == 1) {
         printf("   Ver votos\n");
         printf(">> Ver histograma\n");
+        printf("   Mostrar terna\n");
         printf("   Salir\n");
+    } else if (opcion == 2) {
+        printf("   Ver votos\n");
+        printf("   Ver histograma\n");
+        printf(">> Mostrar terna\n");
     } else {
         printf("   Ver votos\n");
         printf("   Ver histograma\n");
+        printf("   Mostrar terna\n");
         printf(">> Salir\n");
     }
 }
@@ -572,7 +579,7 @@ void titulo () {
     printf(" ____) | \\__ \\ ||  __/ | | | | | (_| | | (_| |  __/    \\  / (_) | || (_| | (__| | (_) | | | |  __/\\__ \\\n");
     printf("|_____/|_|___/\\__\\___|_| |_| |_|\\__,_|  \\__,_|\\___|     \\/ \\___/ \\__\\__,_|\\___|_|\\___/|_| |_|\\___||___/\n");
     printf("\n");
-    sleep(1);
+    sleep(2);
 }
 
 void VerVotos () {
@@ -642,6 +649,91 @@ void VerVotos () {
 
 }
 
+void MostrarTerna () {
+    //hace lo mismo que VerVotos pero solo con los 3 primeros
+    FILE *candidatos;
+    candidatos = fopen("candidatos.txt", "r");
+
+    struct Candidato candidato[6];
+
+    //si la estructura es es tarjeton,candidato,votos,votos-estudiantes,votos-docentes,votos-egresados,votos-administrativos,votos-consejo.
+    //Se guarda cada candidato en un arreglo de estructuras
+    int i = 0;
+    while (fscanf(candidatos, "%d,%[^,],%d,%d,%d,%d,%d,%d.\n", &candidato[i].tarjeton, candidato[i].nombre, &candidato[i].votos, &candidato[i].votos_estudiantes, &candidato[i].votos_docentes, &candidato[i].votos_egresados, &candidato[i].votos_administrativos, &candidato[i].votos_consejo) == 8) {
+        i++;
+    }
+
+
+    fclose(candidatos);
+
+    //Se halla los votos totales
+    float votostotales = 0;
+    for (int i = 0; i < 6; i++) {
+        votostotales += candidato[i].votos;
+    }
+    //se halla cuales fueron los 3 mas votados
+    int mayor1 = 0;
+    int mayor2 = 0;
+    int mayor3 = 0;
+    int pos1 = 0;
+    int pos2 = 0;
+    int pos3 = 0;
+    for (int i = 0; i < 6; i++) {
+        if (candidato[i].votos > mayor1) {
+            mayor1 = candidato[i].votos;
+            pos1 = i;
+        }
+    }
+    for (int i = 0; i < 6; i++) {
+        if (candidato[i].votos > mayor2 && candidato[i].votos < mayor1) {
+            mayor2 = candidato[i].votos;
+            pos2 = i;
+        }
+    }
+    for (int i = 0; i < 6; i++) {
+        if (candidato[i].votos > mayor3 && candidato[i].votos < mayor2) {
+            mayor3 = candidato[i].votos;
+            pos3 = i;
+        }
+    }
+
+    printf("\n");
+    printf("Votos totales: %.0f\n", votostotales);
+    printf("Votos por candidato:\n");
+    printf("                                      ┌─────────────────────────────────────────────────────────────┐\n");
+    printf("                                      │                              VOTOS                          │\n");
+    printf("┌──────┬──────────────────────────────┼──────┬───────────┬────────┬─────────┬───────────────┬───────┤\n");
+    printf("│numero│nombre:                       │total │estudiantes│docentes│egresados│administrativos│consejo│\n");
+    printf("├──────┼──────────────────────────────┼──────┼───────────┼────────┼─────────┼───────────────┼───────┤\n");
+    //Se ingresa el primero con el mayor numero de votos
+    printf("│%d     │%s      │%6d│%11d│%8d│%9d│%15d│%7d│\n", candidato[pos1].tarjeton, candidato[pos1].nombre, candidato[pos1].votos, candidato[pos1].votos_estudiantes, candidato[pos1].votos_docentes, candidato[pos1].votos_egresados, candidato[pos1].votos_administrativos, candidato[pos1].votos_consejo);
+    printf("├──────┼──────────────────────────────┼──────┼───────────┼────────┼─────────┼───────────────┼───────┤\n");
+    //Se ingresa el segundo con el segundo mayor numero de votos
+    printf("│%d     │%s  │%6d│%11d│%8d│%9d│%15d│%7d│\n", candidato[pos2].tarjeton, candidato[pos2].nombre, candidato[pos2].votos, candidato[pos2].votos_estudiantes, candidato[pos2].votos_docentes, candidato[pos2].votos_egresados, candidato[pos2].votos_administrativos, candidato[pos2].votos_consejo);
+    printf("├──────┼──────────────────────────────┼──────┼───────────┼────────┼─────────┼───────────────┼───────┤\n");
+    //Se ingresa el tercero con el tercer mayor numero de votos
+    printf("│%d     │%s   │%6d│%11d│%8d│%9d│%15d│%7d│\n", candidato[pos3].tarjeton, candidato[pos3].nombre, candidato[pos3].votos, candidato[pos3].votos_estudiantes, candidato[pos3].votos_docentes, candidato[pos3].votos_egresados, candidato[pos3].votos_administrativos, candidato[pos3].votos_consejo);
+    printf("└──────┴──────────────────────────────┴──────┴───────────┴────────┴─────────┴───────────────┴───────┘\n");
+    printf("\n\n");
+    //Ahora en porcentajes
+    printf("Votos por candidato en porcentaje:\n");
+    printf("                                      ┌─────────────────────────────────────────────────────────────┐\n");
+    printf("                                      │                              VOTOS                          │\n");
+    printf("┌──────┬──────────────────────────────┼──────┬───────────┬────────┬─────────┬───────────────┬───────┤\n");
+    printf("│numero│nombre:                       │total │estudiantes│docentes│egresados│administrativos│consejo│\n");
+    printf("├──────┼──────────────────────────────┼──────┼───────────┼────────┼─────────┼───────────────┼───────┤\n");
+    //Se ingresa el primero con el mayor numero de votos
+    printf("│%d     │%s      │%6.2f│%11.2f│%8.2f│%9.2f│%15.2f│%7.2f│\n", candidato[pos1].tarjeton, candidato[pos1].nombre, candidato[pos1].votos / votostotales * 100, candidato[pos1].votos_estudiantes / votostotales * 100, candidato[pos1].votos_docentes / votostotales * 100, candidato[pos1].votos_egresados / votostotales * 100, candidato[pos1].votos_administrativos / votostotales * 100, candidato[pos1].votos_consejo / votostotales * 100);
+    printf("├──────┼──────────────────────────────┼──────┼───────────┼────────┼─────────┼───────────────┼───────┤\n");
+    //Se ingresa el segundo con el segundo mayor numero de votos
+    printf("│%d     │%s  │%6.2f│%11.2f│%8.2f│%9.2f│%15.2f│%7.2f│\n", candidato[pos2].tarjeton, candidato[pos2].nombre, candidato[pos2].votos / votostotales * 100, candidato[pos2].votos_estudiantes / votostotales * 100, candidato[pos2].votos_docentes / votostotales * 100, candidato[pos2].votos_egresados / votostotales * 100, candidato[pos2].votos_administrativos / votostotales * 100, candidato[pos2].votos_consejo / votostotales * 100);
+    printf("├──────┼──────────────────────────────┼──────┼───────────┼────────┼─────────┼───────────────┼───────┤\n");
+    //Se ingresa el tercero con el tercer mayor numero de votos
+    printf("│%d     │%s   │%6.2f│%11.2f│%8.2f│%9.2f│%15.2f│%7.2f│\n", candidato[pos3].tarjeton, candidato[pos3].nombre, candidato[pos3].votos / votostotales * 100, candidato[pos3].votos_estudiantes / votostotales * 100, candidato[pos3].votos_docentes / votostotales * 100, candidato[pos3].votos_egresados / votostotales * 100, candidato[pos3].votos_administrativos / votostotales * 100, candidato[pos3].votos_consejo / votostotales * 100);
+    printf("└──────┴──────────────────────────────┴──────┴───────────┴────────┴─────────┴───────────────┴───────┘\n");
+    printf("\n");
+}
+
 //Ahora se genera un histograma con los votos
 void histograma () {
     FILE *candidatos;
@@ -667,37 +759,146 @@ void histograma () {
 
     //Se realiza el histograma con * y se imprime tipo:
     printf("Histograma:\n");
-    printf("Luis Fernando Gaviria Trujillo:   ");
+    printf("Luis Fernando Gaviria Trujillo(%.1f%%):", candidato[0].votos / votostotales * 100);
     for (int i = 0; i < candidato[0].votos / votostotales * 100; i++) {
-        printf("*");
+        //se imprime de esta forma ════■
+        //el ultimo se imprime asi ■
+        if (i == candidato[0].votos / votostotales * 100 - 1) {
+            printf("■\n");
+        } else {
+            printf("═");
+        }
     }
 
-    printf("\nCarlos Alfonso Victoria Mena:     ");
+    printf("\nCarlos Alfonso Victoria Mena(%.1f%%):  ", candidato[1].votos / votostotales * 100);
     for (int i = 0; i < candidato[1].votos / votostotales * 100; i++) {
-        printf("*");
+        if (i == candidato[1].votos / votostotales * 100 - 1) {
+            printf("■\n");
+        } else {
+            printf("═");
+        }
     }
 
-    printf("\nGiovanni Arias:                   ");
+    printf("\nGiovanni Arias(%.1f%%):                ", candidato[2].votos / votostotales * 100);
     for (int i = 0; i < candidato[2].votos / votostotales * 100; i++) {
-        printf("*");
+        if (i == candidato[2].votos / votostotales * 100 - 1) {
+            printf("■\n");
+        } else {
+            printf("═");
+        }
     }
 
-    printf("\nXiomara Rocío González Ordoñez:   ");
+    printf("\nXiomara Rocío González Ordoñez(%.1f%%): ", candidato[3].votos / votostotales * 100);
     for (int i = 0; i < candidato[3].votos / votostotales * 100; i++) {
-        printf("*");
+        if (i == candidato[3].votos / votostotales * 100 - 1) {
+            printf("■\n");
+        } else {
+            printf("═");
+        }
     }
 
-    printf("\nAlexander Molina Cabrera:         ");
+    printf("\nAlexander Molina Cabrera(%.1f%%):      ", candidato[4].votos / votostotales * 100);
     for (int i = 0; i < candidato[4].votos / votostotales * 100; i++) {
-        printf("*");
+        if (i == candidato[4].votos / votostotales * 100 - 1) {
+            printf("■\n");
+        } else {
+            printf("═");
+        }
     }
 
-    printf("\nJuan Carlos Gutiérrez Arias:      ");
+    printf("\nJuan Carlos Gutiérrez Arias(%.1f%%):   ", candidato[5].votos / votostotales * 100);
     for (int i = 0; i < candidato[5].votos / votostotales * 100; i++) {
-        printf("*");
+        if (i == candidato[5].votos / votostotales * 100 - 1) {
+            printf("■\n");
+        } else {
+            printf("═");
+        }
     }
     printf("\n");
 }
+
+void HistogramaTerna () {
+    //hace lo mismo que histograma pero solo con los 3 primeros
+    FILE *candidatos;
+    candidatos = fopen("candidatos.txt", "r");
+
+    struct Candidato candidato[6];
+
+    //si la estructura es es tarjeton,candidato,votos,votos-estudiantes,votos-docentes,votos-egresados,votos-administrativos,votos-consejo.
+    //Se guarda cada candidato en un arreglo de estructuras
+    int i = 0;
+    while (fscanf(candidatos, "%d,%[^,],%d,%d,%d,%d,%d,%d.\n", &candidato[i].tarjeton, candidato[i].nombre, &candidato[i].votos, &candidato[i].votos_estudiantes, &candidato[i].votos_docentes, &candidato[i].votos_egresados, &candidato[i].votos_administrativos, &candidato[i].votos_consejo) == 8) {
+        i++;
+    }
+
+
+    fclose(candidatos);
+
+    //Se halla los votos totales
+    float votostotales = 0;
+    for (int i = 0; i < 6; i++) {
+        votostotales += candidato[i].votos;
+    }
+
+    //se halla cuales fueron los 3 mas votados
+    int mayor1 = 0;
+    int mayor2 = 0;
+    int mayor3 = 0;
+    int pos1 = 0;
+    int pos2 = 0;
+    int pos3 = 0;
+    for (int i = 0; i < 6; i++) {
+        if (candidato[i].votos > mayor1) {
+            mayor1 = candidato[i].votos;
+            pos1 = i;
+        }
+    }
+    for (int i = 0; i < 6; i++) {
+        if (candidato[i].votos > mayor2 && candidato[i].votos < mayor1) {
+            mayor2 = candidato[i].votos;
+            pos2 = i;
+        }
+    }
+    for (int i = 0; i < 6; i++) {
+        if (candidato[i].votos > mayor3 && candidato[i].votos < mayor2) {
+            mayor3 = candidato[i].votos;
+            pos3 = i;
+        }
+    }
+    //Se muestra el histograma igual que en histograma pero solo con los 3 primeros
+    printf("Histograma:\n");
+    //el nombre tambien sale de la posicion del arreglo
+    printf("%s(%.1f%%):      ", candidato[pos1].nombre, candidato[pos1].votos / votostotales * 100);
+    for (int i = 0; i < candidato[pos1].votos / votostotales * 100; i++) {
+        if (i == candidato[pos1].votos / votostotales * 100 - 1) {
+            printf("■\n");
+        } else {
+            printf("═");
+        }
+    }
+    
+    printf("\n%s(%.1f%%):  ", candidato[pos2].nombre, candidato[pos2].votos / votostotales * 100);
+    for (int i = 0; i < candidato[pos2].votos / votostotales * 100; i++) {
+        if (i == candidato[pos2].votos / votostotales * 100 - 1) {
+            printf("■\n");
+        } else {
+            printf("═");
+        }
+    }
+
+    printf("\n%s(%.1f%%):   ", candidato[pos3].nombre, candidato[pos3].votos / votostotales * 100);
+    for (int i = 0; i < candidato[pos3].votos / votostotales * 100; i++) {
+        if (i == candidato[pos3].votos / votostotales * 100 - 1) {
+            printf("■\n");
+        } else {
+            printf("═");
+        }
+    }
+
+    printf("\n");
+}
+
+
 
 void Admin() {
 
@@ -712,10 +913,10 @@ void Admin() {
             getch(); // Descartamos el siguiente carácter
             switch (getch()) {
                 case 65:  // Flecha arriba
-                    op = (op - 1 + 3) % 3;
+                    op = (op - 1 + 4) % 4;
                     break;
                 case 66:  // Flecha abajo
-                    op = (op + 1) % 3;
+                    op = (op + 1) % 4;
                     break;
             }
         }
@@ -732,6 +933,13 @@ void Admin() {
             break;
         case 1:
             histograma();
+            printf("Presione cualquier tecla para continuar...\n");
+            getch();
+            Admin();
+            break;
+        case 2:
+            MostrarTerna();
+            HistogramaTerna();
             printf("Presione cualquier tecla para continuar...\n");
             getch();
             Admin();
@@ -837,6 +1045,5 @@ int main() {
             return 0;
             break;
     }
-
     return 0;
 }
